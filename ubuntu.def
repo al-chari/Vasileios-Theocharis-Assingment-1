@@ -1,0 +1,29 @@
+#Header
+Bootstrap: docker
+From: ubuntu:latest
+
+#Copying the txt files and R into my directory I have for this assignment
+#the path of my ssh files into my school folder
+%files
+  /home/StudentHome/2022/a22vasth/assignment1_analysis.R /assignment1/
+  /home/StudentHome/2022/a22vasth/E-MEXP-3715_data.txt /assignment1/
+  /home/StudentHome/2022/a22vasth/E-MEXP-3715.sdrf.txt /assignment1/
+
+#Download files and install libraries
+%post
+  apt-get update
+  apt-get install -y build-essential
+  apt-get install -y r-base r-base-dev
+  R -e "install.packages(c('openxlsx','ggplot2','statmod'), repos='https://cloud.r-project.org')"
+  R -e "install.packages('BiocManager', repos='https://cloud.r-project.org')"
+  R -e "BiocManager::install(c('limma','hugene10sttranscriptcluster.db'))"
+
+
+#Define environment variables
+%environment
+  export PATH=$PATH:/root
+
+#Script to run the the image is run
+%runscript
+    exec Rscript /assignment1/assignment1_analysis.R
+
